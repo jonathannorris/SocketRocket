@@ -7,6 +7,7 @@
 //
 
 #import "SRB64_NSData.h"
+#import "base64.h"
 
 @implementation SRB64_NSData
 
