@@ -35,7 +35,8 @@
 #import <Security/SecRandom.h>
 
 #import "base64.h"
-#import "NSData+SRB64Additions.h"
+//#import "NSData+SRB64Additions.h"
+#import "SRB64_NSData.h"
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #define sr_dispatch_retain(x)
@@ -524,7 +525,7 @@ static __strong NSData *CRLFCRLF;
         
     NSMutableData *keyBytes = [[NSMutableData alloc] initWithLength:16];
     SecRandomCopyBytes(kSecRandomDefault, keyBytes.length, keyBytes.mutableBytes);
-    _secKey = [keyBytes SR_stringByBase64Encoding];
+    _secKey = [SRB64_NSData SR_stringByBase64Encoding:keyBytes];
     assert([_secKey length] == 24);
     
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
