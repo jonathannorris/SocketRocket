@@ -2,8 +2,7 @@
 //  SRB64_NSData.h
 //  LaunchPad
 //
-//  Created by Jonathan Norris on 2013-08-25.
-//  Copyright (c) 2013 Jonathan Norris. All rights reserved.
+//  Copyright (c) 2013 Syrp Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
