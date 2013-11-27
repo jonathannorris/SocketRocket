@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface SRB64_NSData : NSObject
+@interface LP_SRB64_NSData : NSObject
 
 + (NSString *)SR_stringByBase64Encoding:(NSData*)data;
 

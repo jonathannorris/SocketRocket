@@ -5,10 +5,10 @@
 //  Copyright (c) 2013 Syrp Inc. All rights reserved.
 //
 
-#import "SRB64_NSData.h"
-#import "base64.h"
+#import "LP_SRB64_NSData.h"
+#import "LP_base64.h"
 
-@implementation SRB64_NSData
+@implementation LP_SRB64_NSData
 
 + (NSString *)SR_stringByBase64Encoding:(NSData *)data
 {
@@ -16,7 +16,7 @@
     
     char *buffer = (char *)malloc(buffer_size);
     
-    int len = b64_ntop([data bytes], [data length], buffer, buffer_size);
+    int len = LP_b64_ntop([data bytes], [data length], buffer, buffer_size);
     
     if (len == -1) {
         free(buffer);
