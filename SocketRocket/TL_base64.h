@@ -14,19 +14,19 @@
 //
 
 
-#ifndef LP_SocketRocket_base64_h
-#define LP_SocketRocket_base64_h
+#ifndef TL_SocketRocket_base64_h
+#define TL_SocketRocket_base64_h
 
 #include <sys/types.h>
 
 extern int
-LP_b64_ntop(u_char const *src,
+TL_b64_ntop(u_char const *src,
          size_t srclength,
          char *target,
          size_t targsize);
 
 extern int
-LP_b64_pton(char const *src,
+TL_b64_pton(char const *src,
          u_char *target, 
          size_t targsize);
 

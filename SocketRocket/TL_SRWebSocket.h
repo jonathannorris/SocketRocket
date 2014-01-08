@@ -22,23 +22,23 @@ typedef enum {
     SR_OPEN         = 1,
     SR_CLOSING      = 2,
     SR_CLOSED       = 3,
-} LP_SRReadyState;
+} TL_SRReadyState;
 
-@class LP_SRWebSocket;
+@class TL_SRWebSocket;
 
-extern NSString *const LP_SRWebSocketErrorDomain;
+extern NSString *const TL_SRWebSocketErrorDomain;
 
 #pragma mark - SRWebSocketDelegate
 
-@protocol LP_SRWebSocketDelegate;
+@protocol TL_SRWebSocketDelegate;
 
 #pragma mark - SRWebSocket
 
-@interface LP_SRWebSocket : NSObject <NSStreamDelegate>
+@interface TL_SRWebSocket : NSObject <NSStreamDelegate>
 
-@property (nonatomic, assign) id <LP_SRWebSocketDelegate> delegate;
+@property (nonatomic, assign) id <TL_SRWebSocketDelegate> delegate;
 
-@property (nonatomic, readonly) LP_SRReadyState readyState;
+@property (nonatomic, readonly) TL_SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
 // This returns the negotiated protocol.
@@ -75,17 +75,17 @@ extern NSString *const LP_SRWebSocketErrorDomain;
 
 #pragma mark - SRWebSocketDelegate
 
-@protocol LP_SRWebSocketDelegate <NSObject>
+@protocol TL_SRWebSocketDelegate <NSObject>
 
 // message will either be an NSString if the server is using text
 // or NSData if the server is using binary.
-- (void)webSocket:(LP_SRWebSocket *)webSocket didReceiveMessage:(id)message;
+- (void)webSocket:(TL_SRWebSocket *)webSocket didReceiveMessage:(id)message;
 
 @optional
 
-- (void)webSocketDidOpen:(LP_SRWebSocket *)webSocket;
-- (void)webSocket:(LP_SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-- (void)webSocket:(LP_SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+- (void)webSocketDidOpen:(TL_SRWebSocket *)webSocket;
+- (void)webSocket:(TL_SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+- (void)webSocket:(TL_SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 
 @end
 

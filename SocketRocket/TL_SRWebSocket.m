@@ -15,7 +15,7 @@
 //
 
 
-#import "LP_SRWebSocket.h"
+#import "TL_SRWebSocket.h"
 
 #if TARGET_OS_IPHONE
 #define HAS_ICU
@@ -34,9 +34,9 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <Security/SecRandom.h>
 
-#import "LP_base64.h"
+#import "TL_base64.h"
 //#import "NSData+SRB64Additions.h"
-#import "LP_SRB64_NSData.h"
+#import "TL_SRB64_NSData.h"
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #define sr_dispatch_retain(x)
@@ -92,7 +92,7 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data);
 static inline dispatch_queue_t log_queue();
 static inline void SRFastLog(NSString *format, ...);
 
-@interface NSData (LP_SRWebSocket)
+@interface NSData (TL_SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
 
@@ -131,7 +131,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
     
     char *buffer =  (char *)malloc(buffer_size);
     
-    int len = LP_b64_ntop(md, CC_SHA1_DIGEST_LENGTH, buffer, buffer_size);
+    int len = TL_b64_ntop(md, CC_SHA1_DIGEST_LENGTH, buffer, buffer_size);
     if (len == -1) {
         free(buffer);
         return nil;
@@ -140,7 +140,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
     }
 }
 
-@implementation NSData (LP_SRWebSocket)
+@implementation NSData (TL_SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
 {
@@ -159,15 +159,15 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 
 @end
 
-NSString *const LP_SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
+NSString *const TL_SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
 
 // Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
 typedef size_t (^stream_scanner)(NSData *collected_data);
 
-typedef void (^data_callback)(LP_SRWebSocket *webSocket,  NSData *data);
+typedef void (^data_callback)(TL_SRWebSocket *webSocket,  NSData *data);
 
-@interface LP_SRIOConsumer : NSObject {
+@interface TL_SRIOConsumer : NSObject {
     stream_scanner _scanner;
     data_callback _handler;
     size_t _bytesNeeded;
@@ -187,12 +187,12 @@ typedef void (^data_callback)(LP_SRWebSocket *webSocket,  NSData *data);
 
 - (id)initWithBufferCapacity:(NSUInteger)poolSize;
 
-- (LP_SRIOConsumer *)consumerWithScanner:(stream_scanner)scanner handler:(data_callback)handler bytesNeeded:(size_t)bytesNeeded readToCurrentFrame:(BOOL)readToCurrentFrame unmaskBytes:(BOOL)unmaskBytes;
-- (void)returnConsumer:(LP_SRIOConsumer *)consumer;
+- (TL_SRIOConsumer *)consumerWithScanner:(stream_scanner)scanner handler:(data_callback)handler bytesNeeded:(size_t)bytesNeeded readToCurrentFrame:(BOOL)readToCurrentFrame unmaskBytes:(BOOL)unmaskBytes;
+- (void)returnConsumer:(TL_SRIOConsumer *)consumer;
 
 @end
 
-@interface LP_SRWebSocket ()  <NSStreamDelegate>
+@interface TL_SRWebSocket ()  <NSStreamDelegate>
 
 - (void)_writeData:(NSData *)data;
 - (void)_closeWithProtocolError:(NSString *)message;
@@ -221,7 +221,7 @@ typedef void (^data_callback)(LP_SRWebSocket *webSocket,  NSData *data);
 - (void)_initializeStreams;
 - (void)_connect;
 
-@property (nonatomic) LP_SRReadyState readyState;
+@property (nonatomic) TL_SRReadyState readyState;
 
 @property (nonatomic) NSOperationQueue *delegateOperationQueue;
 @property (nonatomic) dispatch_queue_t delegateDispatchQueue;
@@ -229,7 +229,7 @@ typedef void (^data_callback)(LP_SRWebSocket *webSocket,  NSData *data);
 @end
 
 
-@implementation LP_SRWebSocket {
+@implementation TL_SRWebSocket {
     NSInteger _webSocketVersion;
     
     NSOperationQueue *_delegateOperationQueue;
@@ -281,7 +281,7 @@ typedef void (^data_callback)(LP_SRWebSocket *webSocket,  NSData *data);
     NSMutableSet *_scheduledRunloops;
     
     // We use this to retain ourselves.
-    __strong LP_SRWebSocket *_selfRetain;
+    __strong TL_SRWebSocket *_selfRetain;
     
     NSArray *_requestedProtocols;
     SRIOConsumerPool *_consumerPool;
@@ -398,7 +398,7 @@ static __strong NSData *CRLFCRLF;
 
 #ifndef NDEBUG
 
-- (void)setReadyState:(LP_SRReadyState)aReadyState;
+- (void)setReadyState:(TL_SRReadyState)aReadyState;
 {
     [self willChangeValueForKey:@"readyState"];
     assert(aReadyState > _readyState);
@@ -468,7 +468,7 @@ static __strong NSData *CRLFCRLF;
     }
     
     if(![self _checkHandshake:_receivedHTTPHeaders]) {
-        [self _failWithError:[NSError errorWithDomain:LP_SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
+        [self _failWithError:[NSError errorWithDomain:TL_SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
         return;
     }
     
@@ -476,7 +476,7 @@ static __strong NSData *CRLFCRLF;
     if (negotiatedProtocol) {
         // Make sure we requested the protocol
         if ([_requestedProtocols indexOfObject:negotiatedProtocol] == NSNotFound) {
-            [self _failWithError:[NSError errorWithDomain:LP_SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Server specified Sec-WebSocket-Protocol that wasn't requested"] forKey:NSLocalizedDescriptionKey]]];
+            [self _failWithError:[NSError errorWithDomain:TL_SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Server specified Sec-WebSocket-Protocol that wasn't requested"] forKey:NSLocalizedDescriptionKey]]];
             return;
         }
         
@@ -503,7 +503,7 @@ static __strong NSData *CRLFCRLF;
         _receivedHTTPHeaders = CFHTTPMessageCreateEmpty(NULL, NO);
     }
                         
-    [self _readUntilHeaderCompleteWithCallback:^(LP_SRWebSocket *self,  NSData *data) {
+    [self _readUntilHeaderCompleteWithCallback:^(TL_SRWebSocket *self,  NSData *data) {
         CFHTTPMessageAppendBytes(_receivedHTTPHeaders, (const UInt8 *)data.bytes, data.length);
         
         if (CFHTTPMessageIsHeaderComplete(_receivedHTTPHeaders)) {
@@ -525,7 +525,7 @@ static __strong NSData *CRLFCRLF;
         
     NSMutableData *keyBytes = [[NSMutableData alloc] initWithLength:16];
     SecRandomCopyBytes(kSecRandomDefault, keyBytes.length, keyBytes.mutableBytes);
-    _secKey = [LP_SRB64_NSData SR_stringByBase64Encoding:keyBytes];
+    _secKey = [TL_SRB64_NSData SR_stringByBase64Encoding:keyBytes];
     assert([_secKey length] == 24);
     
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
@@ -921,7 +921,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             }
         }
     } else {
-        [self _addConsumerWithDataLength:frame_header.payload_length callback:^(LP_SRWebSocket *self, NSData *newData) {
+        [self _addConsumerWithDataLength:frame_header.payload_length callback:^(TL_SRWebSocket *self, NSData *newData) {
             if (isControlFrame) {
                 [self _handleFrameWithData:newData opCode:frame_header.opcode];
             } else {
@@ -970,7 +970,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 {
     assert((_currentFrameCount == 0 && _currentFrameOpcode == 0) || (_currentFrameCount > 0 && _currentFrameOpcode > 0));
 
-    [self _addConsumerWithDataLength:2 callback:^(LP_SRWebSocket *self, NSData *data) {
+    [self _addConsumerWithDataLength:2 callback:^(TL_SRWebSocket *self, NSData *data) {
         __block frame_header header = {0};
         
         const uint8_t *headerBuffer = data.bytes;
@@ -1020,7 +1020,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         if (extra_bytes_needed == 0) {
             [self _handleFrameHeader:header curData:self->_currentFrameData];
         } else {
-            [self _addConsumerWithDataLength:extra_bytes_needed callback:^(LP_SRWebSocket *self, NSData *data) {
+            [self _addConsumerWithDataLength:extra_bytes_needed callback:^(TL_SRWebSocket *self, NSData *data) {
                 size_t mapped_size = data.length;
                 const void *mapped_buffer = data.bytes;
                 size_t offset = 0;
@@ -1185,7 +1185,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
         return didWork;
     }
     
-    LP_SRIOConsumer *consumer = [_consumers objectAtIndex:0];
+    TL_SRIOConsumer *consumer = [_consumers objectAtIndex:0];
     
     size_t bytesNeeded = consumer.bytesNeeded;
     
@@ -1493,7 +1493,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 
-@implementation LP_SRIOConsumer
+@implementation TL_SRIOConsumer
 
 @synthesize bytesNeeded = _bytesNeeded;
 @synthesize consumer = _scanner;
@@ -1535,14 +1535,14 @@ static const size_t SRFrameHeaderOverhead = 32;
     return [self initWithBufferCapacity:8];
 }
 
-- (LP_SRIOConsumer *)consumerWithScanner:(stream_scanner)scanner handler:(data_callback)handler bytesNeeded:(size_t)bytesNeeded readToCurrentFrame:(BOOL)readToCurrentFrame unmaskBytes:(BOOL)unmaskBytes;
+- (TL_SRIOConsumer *)consumerWithScanner:(stream_scanner)scanner handler:(data_callback)handler bytesNeeded:(size_t)bytesNeeded readToCurrentFrame:(BOOL)readToCurrentFrame unmaskBytes:(BOOL)unmaskBytes;
 {
-    LP_SRIOConsumer *consumer = nil;
+    TL_SRIOConsumer *consumer = nil;
     if (_bufferedConsumers.count) {
         consumer = [_bufferedConsumers lastObject];
         [_bufferedConsumers removeLastObject];
     } else {
-        consumer = [[LP_SRIOConsumer alloc] init];
+        consumer = [[TL_SRIOConsumer alloc] init];
     }
     
     [consumer setupWithScanner:scanner handler:handler bytesNeeded:bytesNeeded readToCurrentFrame:readToCurrentFrame unmaskBytes:unmaskBytes];
@@ -1550,7 +1550,7 @@ static const size_t SRFrameHeaderOverhead = 32;
     return consumer;
 }
 
-- (void)returnConsumer:(LP_SRIOConsumer *)consumer;
+- (void)returnConsumer:(TL_SRIOConsumer *)consumer;
 {
     if (_bufferedConsumers.count < _poolSize) {
         [_bufferedConsumers addObject:consumer];

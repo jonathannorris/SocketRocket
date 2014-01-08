@@ -1,14 +1,14 @@
 //
 //  SRB64_NSData.m
-//  LaunchPad
+//  Taplytics
 //
 //  Copyright (c) 2013 Syrp Inc. All rights reserved.
 //
 
-#import "LP_SRB64_NSData.h"
-#import "LP_base64.h"
+#import "TL_SRB64_NSData.h"
+#import "TL_base64.h"
 
-@implementation LP_SRB64_NSData
+@implementation TL_SRB64_NSData
 
 + (NSString *)SR_stringByBase64Encoding:(NSData *)data
 {
@@ -16,7 +16,7 @@
     
     char *buffer = (char *)malloc(buffer_size);
     
-    int len = LP_b64_ntop([data bytes], [data length], buffer, buffer_size);
+    int len = TL_b64_ntop([data bytes], [data length], buffer, buffer_size);
     
     if (len == -1) {
         free(buffer);
