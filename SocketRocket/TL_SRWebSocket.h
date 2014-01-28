@@ -91,24 +91,24 @@ extern NSString *const TL_SRWebSocketErrorDomain;
 
 #pragma mark - NSURLRequest (CertificateAdditions)
 
-@interface NSURLRequest (CertificateAdditions)
+@interface NSURLRequest (TL_CertificateAdditions)
 
-@property (nonatomic, retain, readonly) NSArray *SR_SSLPinnedCertificates;
+@property (nonatomic, retain, readonly) NSArray *TL_SR_SSLPinnedCertificates;
 
 @end
 
 #pragma mark - NSMutableURLRequest (CertificateAdditions)
 
-@interface NSMutableURLRequest (CertificateAdditions)
+@interface NSMutableURLRequest (TL_CertificateAdditions)
 
-@property (nonatomic, retain) NSArray *SR_SSLPinnedCertificates;
+@property (nonatomic, retain) NSArray *TL_SR_SSLPinnedCertificates;
 
 @end
 
 #pragma mark - NSRunLoop (SRWebSocket)
 
-@interface NSRunLoop (SRWebSocket)
+@interface NSRunLoop (TL_SRWebSocket)
 
-+ (NSRunLoop *)SR_networkRunLoop;
++ (NSRunLoop *)TL_SR_networkRunLoop;
 
 @end

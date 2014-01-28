@@ -99,14 +99,14 @@ static inline void SRFastLog(NSString *format, ...);
 @end
 
 
-@interface NSString (SRWebSocket)
+@interface NSString (TL_SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
 
 @end
 
 
-@interface NSURL (SRWebSocket)
+@interface NSURL (TL_SRWebSocket)
 
 // The origin isn't really applicable for a native application.
 // So instead, just map ws -> http and wss -> https.
@@ -115,7 +115,7 @@ static inline void SRFastLog(NSString *format, ...);
 @end
 
 
-@interface _SRRunLoopThread : NSThread
+@interface _TL_SRRunLoopThread : NSThread
 
 @property (nonatomic, readonly) NSRunLoop *runLoop;
 
@@ -150,7 +150,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 @end
 
 
-@implementation NSString (SRWebSocket)
+@implementation NSString (TL_SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
 {
@@ -183,7 +183,7 @@ typedef void (^data_callback)(TL_SRWebSocket *webSocket,  NSData *data);
 @end
 
 // This class is not thread-safe, and is expected to always be run on the same queue.
-@interface SRIOConsumerPool : NSObject
+@interface TL_SRIOConsumerPool : NSObject
 
 - (id)initWithBufferCapacity:(NSUInteger)poolSize;
 
@@ -284,7 +284,7 @@ typedef void (^data_callback)(TL_SRWebSocket *webSocket,  NSData *data);
     __strong TL_SRWebSocket *_selfRetain;
     
     NSArray *_requestedProtocols;
-    SRIOConsumerPool *_consumerPool;
+    TL_SRIOConsumerPool *_consumerPool;
 }
 
 @synthesize delegate = _delegate;
@@ -360,7 +360,7 @@ static __strong NSData *CRLFCRLF;
 
     _consumers = [[NSMutableArray alloc] init];
     
-    _consumerPool = [[SRIOConsumerPool alloc] init];
+    _consumerPool = [[TL_SRIOConsumerPool alloc] init];
     
     _scheduledRunloops = [[NSMutableSet alloc] init];
     
@@ -578,7 +578,7 @@ static __strong NSData *CRLFCRLF;
         [_outputStream setProperty:(__bridge id)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(__bridge id)kCFStreamPropertySocketSecurityLevel];
         
         // If we're using pinned certs, don't validate the certificate chain
-        if ([_urlRequest SR_SSLPinnedCertificates].count) {
+        if ([_urlRequest TL_SR_SSLPinnedCertificates].count) {
             [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
         }
         
@@ -598,7 +598,7 @@ static __strong NSData *CRLFCRLF;
 - (void)_connect;
 {
     if (!_scheduledRunloops.count) {
-        [self scheduleInRunLoop:[NSRunLoop SR_networkRunLoop] forMode:NSDefaultRunLoopMode];
+        [self scheduleInRunLoop:[NSRunLoop TL_SR_networkRunLoop] forMode:NSDefaultRunLoopMode];
     }
     
     
@@ -1373,7 +1373,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 {
     if (_secure && !_pinnedCertFound && (eventCode == NSStreamEventHasBytesAvailable || eventCode == NSStreamEventHasSpaceAvailable)) {
         
-        NSArray *sslCerts = [_urlRequest SR_SSLPinnedCertificates];
+        NSArray *sslCerts = [_urlRequest TL_SR_SSLPinnedCertificates];
         if (sslCerts) {
             SecTrustRef secTrust = (__bridge SecTrustRef)[aStream propertyForKey:(__bridge id)kCFStreamPropertySSLPeerTrust];
             if (secTrust) {
@@ -1515,7 +1515,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 
-@implementation SRIOConsumerPool {
+@implementation TL_SRIOConsumerPool {
     NSUInteger _poolSize;
     NSMutableArray *_bufferedConsumers;
 }
@@ -1560,30 +1560,30 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 
-@implementation  NSURLRequest (CertificateAdditions)
+@implementation  NSURLRequest (TL_CertificateAdditions)
 
-- (NSArray *)SR_SSLPinnedCertificates;
+- (NSArray *)TL_SR_SSLPinnedCertificates;
 {
     return [NSURLProtocol propertyForKey:@"SR_SSLPinnedCertificates" inRequest:self];
 }
 
 @end
 
-@implementation  NSMutableURLRequest (CertificateAdditions)
+@implementation  NSMutableURLRequest (TL_CertificateAdditions)
 
-- (NSArray *)SR_SSLPinnedCertificates;
+- (NSArray *)TL_SR_SSLPinnedCertificates;
 {
     return [NSURLProtocol propertyForKey:@"SR_SSLPinnedCertificates" inRequest:self];
 }
 
-- (void)setSR_SSLPinnedCertificates:(NSArray *)SR_SSLPinnedCertificates;
+- (void)setTL_SR_SSLPinnedCertificates:(NSArray *)SR_SSLPinnedCertificates;
 {
     [NSURLProtocol setProperty:SR_SSLPinnedCertificates forKey:@"SR_SSLPinnedCertificates" inRequest:self];
 }
 
 @end
 
-@implementation NSURL (SRWebSocket)
+@implementation NSURL (TL_SRWebSocket)
 
 - (NSString *)SR_origin;
 {
@@ -1692,15 +1692,15 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
 
 #endif
 
-static _SRRunLoopThread *networkThread = nil;
+static _TL_SRRunLoopThread *networkThread = nil;
 static NSRunLoop *networkRunLoop = nil;
 
-@implementation NSRunLoop (SRWebSocket)
+@implementation NSRunLoop (TL_SRWebSocket)
 
-+ (NSRunLoop *)SR_networkRunLoop {
++ (NSRunLoop *)TL_SR_networkRunLoop {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        networkThread = [[_SRRunLoopThread alloc] init];
+        networkThread = [[_TL_SRRunLoopThread alloc] init];
         networkThread.name = @"com.squareup.SocketRocket.NetworkThread";
         [networkThread start];
         networkRunLoop = networkThread.runLoop;
@@ -1712,7 +1712,7 @@ static NSRunLoop *networkRunLoop = nil;
 @end
 
 
-@implementation _SRRunLoopThread {
+@implementation _TL_SRRunLoopThread {
     dispatch_group_t _waitGroup;
 }
 
