@@ -1625,7 +1625,7 @@ static inline void SRFastLog(NSString *format, ...)  {
     
     va_end(arg_list);
     
-    NSLog(@"[SR] %@", formattedString);
+//    NSLog(@"[SR] %@", formattedString);
 #endif
 }
 
